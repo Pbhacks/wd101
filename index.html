@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('https://wallpapers.com/images/hd/dark-city-4k-87ghc9a0m9txutj9.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.5);
+        }
+
+        h1 {
+            color: #FFD700;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 4px;
+            border: 1px solid #FFD700;
+            background: #333;
+            color: #fff;
+        }
+
+        button {
+            background: #FFD700;
+            color: #000;
+            cursor: pointer;
+            border: none;
+        }
+
+        button:hover {
+            background: #FFC107;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #FFD700;
+            text-align: left;
+        }
+
+        th {
+            background: #333;
+        }
+
+        .admin-controls {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .admin-controls button {
+            background: #e74c3c;
+        }
+
+        .admin-controls button:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registration Form</h1>
+        <form id="registrationForm">
+            <input type="text" id="name" placeholder="Name" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <input type="date" id="dob" placeholder="Date of Birth" required>
+            <label>
+                <input type="checkbox" id="terms" required> I accept the terms and conditions
+            </label>
+            <button type="submit">Submit</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Dob</th>
+                    <th>Accepted terms?</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="entriesTable">
+            </tbody>
+        </table>
+
+        <div class="admin-controls">
+            <button id="removeAllButton">Remove All Entries</button>
+        </div>
+    </div>
+
+    <script>
+        // Load saved data from localStorage
+        function loadEntries() {
+            const tableBody = document.getElementById('entriesTable');
+            const data = JSON.parse(localStorage.getItem('registrationData')) || [];
+
+            tableBody.innerHTML = '';
+
+            data.forEach(entry => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${entry.name}</td>
+                    <td>${entry.email}</td>
+                    <td>${entry.password}</td>
+                    <td>${entry.dob}</td>
+                    <td>${entry.terms ? 'Yes' : 'No'}</td>
+                    <td><button class="removeButton">Remove</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            // Add event listeners to the remove buttons
+            document.querySelectorAll('.removeButton').forEach(button => {
+                button.addEventListener('click', () => {
+                    const name = button.closest('tr').children[0].textContent;
+                    removeEntry(name);
+                });
+            });
+        }
+
+        // Add an entry to the table and localStorage
+        document.getElementById('registrationForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const dob = document.getElementById('dob').value;
+            const terms = document.getElementById('terms').checked;
+
+            // Validate date of birth
+            const dobDate = new Date(dob);
+            const age = new Date().getFullYear() - dobDate.getFullYear();
+            if (age < 18 || age > 55) {
+                alert('You must be between 18 and 55 years old.');
+                return;
+            }
+
+            const newEntry = { name, email, password, dob, terms };
+            const existingData = JSON.parse(localStorage.getItem('registrationData')) || [];
+            existingData.push(newEntry);
+            localStorage.setItem('registrationData', JSON.stringify(existingData));
+
+            loadEntries(); // Refresh the table
+            event.target.reset(); // Clear the form
+        });
+
+        // Remove an entry by name
+        function removeEntry(name) {
+            let existingData = JSON.parse(localStorage.getItem('registrationData')) || [];
+            existingData = existingData.filter(data => data.name !== name);
+            localStorage.setItem('registrationData', JSON.stringify(existingData));
+            loadEntries(); // Refresh the table
+        }
+
+        // Remove all entries
+        document.getElementById('removeAllButton').addEventListener('click', () => {
+            localStorage.removeItem('registrationData');
+            loadEntries(); // Refresh the table
+        });
+
+        // Initial load of entries
+        loadEntries();
+    </script>
+</body>
+</html>
