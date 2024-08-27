@@ -5,7 +5,7 @@ function loadEntries() {
 
     tableBody.innerHTML = '';
 
-    data.forEach(entry => {
+    data.forEach((entry, index) => {
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${entry.name}</td>
@@ -13,7 +13,7 @@ function loadEntries() {
             <td>${entry.password}</td>
             <td>${entry.dob}</td>
             <td>${entry.terms ? 'Yes' : 'No'}</td>
-            <td><button class="removeButton">Remove</button></td>
+            <td><button class="removeButton" data-index="${index}">Remove</button></td>
         `;
         tableBody.appendChild(row);
     });
@@ -21,8 +21,8 @@ function loadEntries() {
     // Add event listeners to the remove buttons
     document.querySelectorAll('.removeButton').forEach(button => {
         button.addEventListener('click', () => {
-            const name = button.closest('tr').children[0].textContent;
-            removeEntry(name);
+            const index = button.getAttribute('data-index');
+            removeEntry(index);
         });
     });
 }
@@ -54,10 +54,10 @@ document.getElementById('registrationForm').addEventListener('submit', (event) =
     event.target.reset(); // Clear the form
 });
 
-// Remove an entry by name
-function removeEntry(name) {
+// Remove an entry by index
+function removeEntry(index) {
     let existingData = JSON.parse(localStorage.getItem('registrationData')) || [];
-    existingData = existingData.filter(data => data.name !== name);
+    existingData.splice(index, 1); // Remove entry at the given index
     localStorage.setItem('registrationData', JSON.stringify(existingData));
     loadEntries(); // Refresh the table
 }

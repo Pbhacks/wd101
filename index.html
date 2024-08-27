@@ -89,6 +89,34 @@
         .admin-controls button:hover {
             background: #c0392b;
         }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 10px;
+            }
+
+            input, button {
+                font-size: 14px;
+                padding: 8px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            input, button {
+                font-size: 12px;
+                padding: 6px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -111,8 +139,8 @@
                     <th>Name</th>
                     <th>Email</th>
                     <th>Password</th>
-                    <th>Dob</th>
-                    <th>Accepted terms?</th>
+                    <th>Date of Birth</th>
+                    <th>Accepted Terms?</th>
                     <th>Actions</th>
                 </tr>
             </thead>
